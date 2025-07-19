@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🚀 Real-Time Trading Bot Dashboard</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         * {
@@ -14,9 +17,9 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1e1e1e;
             min-height: 100vh;
-            color: #333;
+            color: #e0e0e0;
         }
 
         .container {
@@ -28,18 +31,18 @@
         .header {
             text-align: center;
             margin-bottom: 30px;
-            color: white;
+            color: #e0e0e0;
         }
 
         .header h1 {
             font-size: 3rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            color: #00bcd4;
         }
 
         .header p {
             font-size: 1.2rem;
-            opacity: 0.9;
+            opacity: 0.8;
         }
 
         .dashboard {
@@ -50,16 +53,17 @@
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
+            background: #2d2d2d;
+            border-radius: 8px;
             padding: 25px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 1px solid #404040;
+            margin-bottom: 20px;
+            overflow: hidden;
         }
 
         .card h2 {
-            color: #4a5568;
+            color: #00bcd4;
             margin-bottom: 15px;
             font-size: 1.5rem;
             display: flex;
@@ -68,30 +72,33 @@
         }
 
         .balance-card {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
+            background: #1a3a4a;
+            color: #e0e0e0;
+            border: 1px solid #00bcd4;
         }
 
         .balance-card h2 {
-            color: white;
+            color: #00bcd4;
         }
 
         .portfolio-card {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            color: white;
+            background: #1a4a3a;
+            color: #e0e0e0;
+            border: 1px solid #4caf50;
         }
 
         .portfolio-card h2 {
-            color: white;
+            color: #4caf50;
         }
 
         .bot-status {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            color: white;
+            background: #4a3a1a;
+            color: #e0e0e0;
+            border: 1px solid #ff9800;
         }
 
         .bot-status h2 {
-            color: white;
+            color: #ff9800;
         }
 
         .price-grid {
@@ -102,28 +109,29 @@
         }
 
         .price-item {
-            background: rgba(255,255,255,0.9);
+            background: #3d3d3d;
             padding: 15px;
-            border-radius: 10px;
+            border-radius: 6px;
             text-align: center;
-            border-left: 4px solid #4facfe;
+            border-left: 4px solid #00bcd4;
             transition: transform 0.2s;
             cursor: pointer;
         }
 
         .price-item:hover {
             transform: translateY(-2px);
+            background: #4d4d4d;
         }
 
         .price-item h3 {
-            color: #2d3748;
+            color: #e0e0e0;
             margin-bottom: 5px;
         }
 
         .price-value {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #2d3748;
+            color: #e0e0e0;
         }
 
         .price-change {
@@ -148,17 +156,22 @@
         }
 
         .indicator {
-            background: rgba(255,255,255,0.7);
+            background: #4d4d4d;
             padding: 5px;
-            border-radius: 5px;
+            border-radius: 4px;
+            color: #b0b0b0;
         }
 
         .chart-container {
-            height: 400px;
+            min-height: 400px;
             margin-top: 20px;
-            background: rgba(255,255,255,0.9);
-            border-radius: 10px;
+            margin-bottom: 20px;
+            background: #1e1e1e;
+            border-radius: 6px;
             padding: 15px;
+            border: 1px solid #404040;
+            overflow: visible;
+            position: relative;
         }
 
         .trade-form {
@@ -173,41 +186,47 @@
         .trade-form button {
             padding: 10px 15px;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             font-size: 1rem;
         }
 
         .trade-form select,
         .trade-form input {
-            background: rgba(255,255,255,0.9);
-            border: 1px solid #e2e8f0;
+            background: #3d3d3d;
+            border: 1px solid #404040;
+            color: #e0e0e0;
         }
 
         .trade-form button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #404040;
+            color: #e0e0e0;
             cursor: pointer;
             transition: transform 0.2s;
         }
 
         .trade-form button:hover {
             transform: translateY(-2px);
+            background: #505050;
         }
 
         .buy-btn {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+            background: #1a4a3a !important;
+            color: #4caf50 !important;
+            border: 1px solid #4caf50 !important;
         }
 
         .sell-btn {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
+            background: #4a1a1a !important;
+            color: #f44336 !important;
+            border: 1px solid #f44336 !important;
         }
 
         .toggle-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
+            background: #404040;
+            color: #e0e0e0;
+            border: 1px solid #00bcd4;
             padding: 15px 30px;
-            border-radius: 10px;
+            border-radius: 6px;
             font-size: 1.1rem;
             cursor: pointer;
             transition: all 0.3s;
@@ -217,27 +236,29 @@
 
         .toggle-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background: #505050;
         }
 
         .toggle-btn.running {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            background: #1a4a3a;
+            border-color: #4caf50;
+            color: #4caf50;
         }
 
         .history-item {
-            background: rgba(255,255,255,0.8);
+            background: #3d3d3d;
             padding: 10px;
             margin: 5px 0;
-            border-radius: 8px;
-            border-left: 4px solid #4facfe;
+            border-radius: 6px;
+            border-left: 4px solid #00bcd4;
         }
 
         .history-item.buy {
-            border-left-color: #43e97b;
+            border-left-color: #4caf50;
         }
 
         .history-item.sell {
-            border-left-color: #fa709a;
+            border-left-color: #f44336;
         }
 
         .status-indicator {
@@ -249,12 +270,12 @@
         }
 
         .status-indicator.running {
-            background: #43e97b;
+            background: #4caf50;
             animation: pulse 2s infinite;
         }
 
         .status-indicator.stopped {
-            background: #fa709a;
+            background: #f44336;
         }
 
         @keyframes pulse {
@@ -277,21 +298,86 @@
 
         .chart-controls button {
             padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            background: #667eea;
-            color: white;
+            border: 1px solid #404040;
+            border-radius: 4px;
+            background: #3d3d3d;
+            color: #e0e0e0;
             cursor: pointer;
             font-size: 0.9rem;
         }
 
         .chart-controls button:hover {
-            background: #5a67d8;
+            background: #4d4d4d;
         }
 
         .chart-controls button.active {
-            background: #4c51bf;
+            background: #00bcd4;
+            color: #1e1e1e;
+            border-color: #00bcd4;
         }
+
+        /* Chart card specific styling */
+        .chart-card {
+            margin-bottom: 60px;
+            overflow: visible;
+        }
+        
+        .chart-card .card {
+            margin-bottom: 0;
+        }
+
+        .sentiment-card {
+            background: #3a1a4a;
+            color: #e0e0e0;
+            border: 1px solid #9c27b0;
+        }
+
+        .sentiment-card h2 {
+            color: #9c27b0;
+        }
+
+        .sentiment-item {
+            background: #4d4d4d;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 4px solid #9c27b0;
+        }
+
+        .sentiment-score {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .sentiment-score.positive {
+            color: #38a169;
+        }
+
+        .sentiment-score.negative {
+            color: #e53e3e;
+        }
+
+        .sentiment-score.neutral {
+            color: #b0b0b0;
+        }
+
+        .sentiment-sources {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 0.8rem;
+        }
+
+        .sentiment-source {
+            background: #5d5d5d;
+            padding: 5px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+
 
         @media (max-width: 768px) {
             .dashboard {
@@ -340,6 +426,17 @@
                     Bot Status
                 </h2>
                 <div id="bot-status-text">Stopped</div>
+                <div id="market-status" style="margin: 10px 0; font-size: 0.9rem; opacity: 0.8;">Market: Loading...</div>
+            </div>
+
+            <div class="card sentiment-card">
+                <h2>📊 Sentiment Analysis</h2>
+                <div id="sentiment-display">
+                    <div style="text-align: center; opacity: 0.7;">Loading sentiment data...</div>
+                </div>
+            </div>
+
+                
                 <button class="toggle-btn" id="toggle-btn">Start Bot</button>
             </div>
         </div>
@@ -351,7 +448,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card chart-card">
             <h2>📈 Dynamic Charts</h2>
             <div class="chart-controls">
                 <button onclick="selectSymbol('AAPL')" class="active">AAPL</button>
@@ -368,7 +465,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card" style="margin-top: 80px;">
             <h2>💼 Manual Trading</h2>
             <div class="trade-form">
                 <select id="symbol-select">
@@ -387,7 +484,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card" style="margin-top: 40px;">
             <h2>📝 Trading History</h2>
             <div id="trading-history">
                 <div class="loading">No trades yet...</div>
@@ -431,6 +528,7 @@
                     const statusIndicator = document.getElementById('status-indicator');
                     const statusText = document.getElementById('bot-status-text');
                     const toggleBtn = document.getElementById('toggle-btn');
+                    const marketStatus = document.getElementById('market-status');
                     
                     if (data.is_running) {
                         statusIndicator.className = 'status-indicator running';
@@ -443,6 +541,17 @@
                         toggleBtn.textContent = 'Start Bot';
                         toggleBtn.className = 'toggle-btn';
                     }
+                    
+                    // Update market status
+                    if (data.market_hours) {
+                        marketStatus.textContent = '🟢 Market Open';
+                        marketStatus.style.color = '#38a169';
+                    } else {
+                        marketStatus.textContent = '🔴 Market Closed';
+                        marketStatus.style.color = '#e53e3e';
+                    }
+                    
+
                     
                     // Update prices with real data
                     const priceGrid = document.getElementById('price-grid');
@@ -492,10 +601,62 @@
                             `;
                         });
                     }
+                    
+                    // Update sentiment display
+                    updateSentimentDisplay(data.sentiment_data);
                 })
                 .catch(error => {
                     console.error('Error updating dashboard:', error);
                 });
+        }
+
+        function updateSentimentDisplay(sentimentData) {
+            const sentimentDisplay = document.getElementById('sentiment-display');
+            
+            if (!sentimentData || Object.keys(sentimentData).length === 0) {
+                sentimentDisplay.innerHTML = '<div style="text-align: center; opacity: 0.7;">No sentiment data available</div>';
+                return;
+            }
+            
+            let sentimentHTML = '';
+            
+            // Show top 3 symbols with sentiment data
+            const symbolsWithSentiment = Object.entries(sentimentData)
+                .filter(([symbol, data]) => data && data.overall_score !== undefined)
+                .sort((a, b) => Math.abs(b[1].overall_score) - Math.abs(a[1].overall_score))
+                .slice(0, 3);
+            
+            if (symbolsWithSentiment.length === 0) {
+                sentimentDisplay.innerHTML = '<div style="text-align: center; opacity: 0.7;">Loading sentiment data...</div>';
+                return;
+            }
+            
+            symbolsWithSentiment.forEach(([symbol, data]) => {
+                const score = data.overall_score;
+                const scoreClass = score > 0.1 ? 'positive' : score < -0.1 ? 'negative' : 'neutral';
+                const scoreText = score > 0 ? `+${score.toFixed(3)}` : score.toFixed(3);
+                
+                sentimentHTML += `
+                    <div class="sentiment-item">
+                        <div class="sentiment-score ${scoreClass}">
+                            ${symbol}: ${scoreText}
+                        </div>
+                        <div class="sentiment-sources">
+                            <div class="sentiment-source">
+                                Reddit: ${data.reddit ? data.reddit.score.toFixed(2) : 'N/A'}
+                            </div>
+                            <div class="sentiment-source">
+                                News: ${data.news ? data.news.score.toFixed(2) : 'N/A'}
+                            </div>
+                            <div class="sentiment-source">
+                                Social: ${data.social ? data.social.score.toFixed(2) : 'N/A'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            sentimentDisplay.innerHTML = sentimentHTML;
         }
 
         function selectSymbol(symbol) {
@@ -520,39 +681,193 @@
                         return;
                     }
                     
+                    // Create main price trace
                     const trace1 = {
                         x: data.times,
                         y: data.prices,
                         type: 'scatter',
                         mode: 'lines+markers',
                         name: 'Price',
-                        line: { color: '#667eea', width: 2 },
-                        marker: { size: 4 }
+                        line: { color: '#00bcd4', width: 2 },
+                        marker: { size: 4 },
+                        hovertemplate: '<b>%{x}</b><br>Price: $%{y:.2f}<extra></extra>'
                     };
+                    
+                    // Add volume bars if available
+                    const traces = [trace1];
+                    if (data.volumes) {
+                        const trace2 = {
+                            x: data.times,
+                            y: data.volumes,
+                            type: 'bar',
+                            name: 'Volume',
+                            yaxis: 'y2',
+                            opacity: 0.3,
+                            marker: { color: '#4caf50' }
+                        };
+                        traces.push(trace2);
+                    }
+                    
+                    // Always add buy and sell traces to show in legend
+                    const buyMarkers = data.trade_markers ? data.trade_markers.filter(marker => marker.action.toLowerCase() === 'buy') : [];
+                    const sellMarkers = data.trade_markers ? data.trade_markers.filter(marker => marker.action.toLowerCase() === 'sell') : [];
+                    
+                    // Debug: Log trade markers
+                    console.log(`Chart update for ${symbol}:`, {
+                        totalMarkers: data.trade_markers ? data.trade_markers.length : 0,
+                        buyMarkers: buyMarkers.length,
+                        sellMarkers: sellMarkers.length,
+                        markers: data.trade_markers
+                    });
+                    
+                    // Always add buy trace to show in legend
+                    const buyTrace = {
+                        x: buyMarkers.length > 0 ? buyMarkers.map(marker => data.times[marker.index]) : [data.times[0]],
+                        y: buyMarkers.length > 0 ? buyMarkers.map(marker => data.prices[marker.index]) : [data.prices[0]],
+                        type: 'scatter',
+                        mode: 'markers',
+                        name: 'Buy',
+                        marker: {
+                            symbol: 'triangle-up',
+                            size: 12,
+                            color: '#4caf50',
+                            line: { color: '#2e7d32', width: 2 }
+                        },
+                        hovertemplate: '<b>BUY</b><br>Time: %{x}<br>Price: $%{y:.2f}<br>Quantity: ' + 
+                                      (buyMarkers.length > 0 ? buyMarkers.map(m => m.quantity).join(', ') : '0') + '<extra></extra>',
+                        showlegend: true,
+                        visible: buyMarkers.length > 0 ? true : 'legendonly'
+                    };
+                    traces.push(buyTrace);
+                    
+                    // Always add sell trace to show in legend
+                    const sellTrace = {
+                        x: sellMarkers.length > 0 ? sellMarkers.map(marker => data.times[marker.index]) : [data.times[0]],
+                        y: sellMarkers.length > 0 ? sellMarkers.map(marker => data.prices[marker.index]) : [data.prices[0]],
+                        type: 'scatter',
+                        mode: 'markers',
+                        name: 'Sell',
+                        marker: {
+                            symbol: 'triangle-down',
+                            size: 12,
+                            color: '#f44336',
+                            line: { color: '#c62828', width: 2 }
+                        },
+                        hovertemplate: '<b>SELL</b><br>Time: %{x}<br>Price: $%{y:.2f}<br>Quantity: ' + 
+                                      (sellMarkers.length > 0 ? sellMarkers.map(m => m.quantity).join(', ') : '0') + '<extra></extra>',
+                        showlegend: true,
+                        visible: sellMarkers.length > 0 ? true : 'legendonly'
+                    };
+                    traces.push(sellTrace);
+                    
+
                     
                     const layout = {
-                        title: `${symbol} Real-Time Price Chart`,
-                        xaxis: { title: 'Time' },
-                        yaxis: { title: 'Price ($)' },
-                        height: 350,
-                        margin: { l: 50, r: 50, t: 50, b: 50 },
-                        showlegend: false,
-                        plot_bgcolor: 'rgba(255,255,255,0.9)',
-                        paper_bgcolor: 'rgba(255,255,255,0.9)'
+                        title: {
+                            text: `${symbol} Daily Trading Chart (Pre-Market & After-Hours)`,
+                            font: { size: 16, color: '#e0e0e0' }
+                        },
+                        xaxis: { 
+                            title: 'Time (EST)',
+                            titlefont: { color: '#e0e0e0' },
+                            tickfont: { color: '#b0b0b0' },
+                            showgrid: true,
+                            gridcolor: '#404040'
+                        },
+                        yaxis: { 
+                            title: 'Price ($)',
+                            titlefont: { color: '#e0e0e0' },
+                            tickfont: { color: '#b0b0b0' },
+                            side: 'left',
+                            showgrid: true,
+                            gridcolor: '#404040'
+                        },
+                        yaxis2: {
+                            title: 'Volume',
+                            titlefont: { color: '#e0e0e0' },
+                            tickfont: { color: '#b0b0b0' },
+                            side: 'right',
+                            overlaying: 'y',
+                            showgrid: false
+                        },
+                        height: 400,
+                        margin: { l: 60, r: 60, t: 80, b: 60 },
+                        showlegend: true,
+                        legend: {
+                            x: 0.02,
+                            y: 0.98,
+                            bgcolor: 'rgba(45,45,45,0.9)',
+                            bordercolor: '#404040',
+                            borderwidth: 1,
+                            font: { color: '#e0e0e0' }
+                        },
+                        plot_bgcolor: '#1e1e1e',
+                        paper_bgcolor: '#1e1e1e',
+                        hovermode: 'x unified'
                     };
                     
-                    Plotly.newPlot('chart-container', [trace1], layout);
+                    Plotly.newPlot('chart-container', traces, layout);
                     
-                    // Add technical indicators info
+                    // Create comprehensive info panel
                     const infoDiv = document.createElement('div');
-                    infoDiv.style.marginTop = '10px';
+                    infoDiv.style.marginTop = '15px';
+                    infoDiv.style.padding = '15px';
+                    infoDiv.style.background = '#2d2d2d';
+                    infoDiv.style.borderRadius = '6px';
                     infoDiv.style.fontSize = '0.9rem';
+                    infoDiv.style.border = '1px solid #404040';
+                    infoDiv.style.position = 'relative';
+                    infoDiv.style.zIndex = '1';
+                    
+                    const marketStatusColor = data.market_status === 'Market Open' ? '#4caf50' : 
+                                            data.market_status === 'Pre-Market' ? '#ff9800' : '#f44336';
+                    
+                    // Count trades
+                    const buyCount = data.trade_markers ? data.trade_markers.filter(m => m.action.toLowerCase() === 'buy').length : 0;
+                    const sellCount = data.trade_markers ? data.trade_markers.filter(m => m.action.toLowerCase() === 'sell').length : 0;
+                    const totalTrades = buyCount + sellCount;
+                    
                     infoDiv.innerHTML = `
-                        <strong>Technical Indicators:</strong> 
-                        RSI: ${data.rsi.toFixed(1)} | 
-                        SMA(20): $${data.sma_20.toFixed(2)} | 
-                        Volume: ${(data.volume / 1000000).toFixed(1)}M
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div>
+                                <strong>Market Status:</strong> 
+                                <span style="color: ${marketStatusColor}; font-weight: bold;">${data.market_status}</span>
+                            </div>
+                            <div>
+                                <strong>Current Price:</strong> $${data.current_price.toFixed(2)}
+                            </div>
+                            <div>
+                                <strong>Data Points:</strong> ${data.data_points}
+                            </div>
+                            <div>
+                                <strong>Technical Indicators:</strong><br>
+                                RSI: ${data.rsi.toFixed(1)} | SMA(20): $${data.sma_20.toFixed(2)}
+                            </div>
+                            <div>
+                                <strong>Price Range:</strong><br>
+                                High: $${data.price_range.high.toFixed(2)} | Low: $${data.price_range.low.toFixed(2)}
+                            </div>
+                            <div>
+                                <strong>Open/Close:</strong><br>
+                                Open: $${data.price_range.open.toFixed(2)} | Close: $${data.price_range.close.toFixed(2)}
+                            </div>
+                            <div>
+                                <strong>Trading Activity:</strong><br>
+                                <span style="color: #4caf50;">🟢 ${buyCount} Buys</span> | <span style="color: #f44336;">🔴 ${sellCount} Sells</span><br>
+                                <span style="font-weight: bold;">Total: ${totalTrades} trades</span>
+                            </div>
+                        </div>
                     `;
+                    
+                    // Remove existing info div if present
+                    const existingInfo = document.querySelector('#chart-container .info-panel');
+                    if (existingInfo) {
+                        existingInfo.remove();
+                    }
+                    
+                    infoDiv.className = 'info-panel';
+                    infoDiv.style.marginBottom = '0';
+                    infoDiv.style.overflow = 'hidden';
                     document.getElementById('chart-container').appendChild(infoDiv);
                 })
                 .catch(error => {
@@ -607,12 +922,22 @@
             });
         }
 
+
+
         // Event listeners
         document.getElementById('toggle-btn').addEventListener('click', toggleBot);
 
+
+
         // Initial load and start updates
         updateDashboard();
-        updateInterval = setInterval(updateDashboard, 30000); // Update every 30 seconds for real data
+        updateInterval = setInterval(updateDashboard, 2000); // Update every 2 seconds for real-time updates
+        
+        // Force cache refresh
+        if (performance.navigation.type === 1) {
+            // Page was reloaded, clear any cached data
+            console.log('Page reloaded, clearing cache...');
+        }
 
         // Initial chart
         setTimeout(() => {
