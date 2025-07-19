@@ -1,111 +1,181 @@
-# 🚀 Trading Bot Dashboard
+# 🤖 AI Trading Bot with Sentiment Analysis
 
-A simple, colorful trading bot simulation with a beautiful web interface!
+A sophisticated AI-powered trading bot that combines technical analysis with sentiment analysis to make intelligent trading decisions in real-time.
 
-## Features
+## ✨ Features
 
-- 💰 **Real-time balance tracking** - Watch your account balance and portfolio value
-- 📈 **Live price simulation** - Simulated stock prices for popular stocks (AAPL, GOOGL, TSLA, MSFT, AMZN)
-- 🤖 **Automated trading** - Bot automatically buys on dips and sells on rises
-- 💼 **Manual trading** - Buy and sell stocks manually through the interface
-- 📊 **Trading history** - Track all your trades with timestamps
-- 🎨 **Beautiful UI** - Colorful, modern interface with gradients and animations
+### 🎯 Core Trading Features
+- **Real-time Market Data**: Live price feeds from Yahoo Finance API
+- **Technical Analysis**: RSI, SMA, volume analysis, and trend detection
+- **Automated Trading**: Smart buy/sell decisions based on multiple indicators
+- **Portfolio Management**: Real-time balance and position tracking
+- **Risk Management**: Configurable trading limits and stop-losses
 
-## Quick Start
+### 🧠 Sentiment Analysis Integration
+- **Multi-source Sentiment**: Reddit (r/wallstreetbets), News API, and social media
+- **TextBlob NLP**: Natural language processing for sentiment scoring
+- **Weighted Analysis**: Combines sentiment from multiple sources
+- **Real-time Updates**: Sentiment data refreshed every 15 minutes
+- **Trading Integration**: Sentiment signals influence buy/sell decisions
 
-### Local Development
+### 🌐 Web Dashboard
+- **Real-time UI**: Live updates of portfolio, prices, and sentiment
+- **Interactive Charts**: Price charts with trade markers
+- **Sentiment Dashboard**: Color-coded sentiment scores and breakdown
+- **Trading Controls**: Manual trade execution and bot toggle
+- **Responsive Design**: Works on desktop and mobile devices
 
-1. **Install dependencies:**
+## 🚀 Quick Start
+
+### Prerequisites
+- Python 3.9+
+- pip package manager
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/vne1/ai-trading-bot.git
+   cd ai-trading-bot
+   ```
+
+2. **Install dependencies**
    ```bash
    pip install -r requirements.txt
    ```
 
-2. **Run the trading bot:**
+3. **Run the trading bot**
    ```bash
-   python trading_bot.py
+   python3 trading_bot.py
    ```
 
-3. **Open your browser:**
-   Navigate to `http://localhost:8080`
+4. **Access the dashboard**
+   - Open your browser to `http://localhost:5239`
+   - The bot will start with $10,000 initial balance
 
-### Deploy to Heroku
+## 📊 API Endpoints
 
-1. **Install Heroku CLI** (if not already installed):
-   ```bash
-   # macOS
-   brew install heroku/brew/heroku
-   
-   # Windows
-   # Download from https://devcenter.heroku.com/articles/heroku-cli
-   ```
+### Core Endpoints
+- `GET /api/status` - Get current bot status, portfolio, and sentiment data
+- `POST /api/trade` - Execute manual trades
+- `POST /api/toggle_bot` - Start/stop automated trading
+- `GET /api/chart/<symbol>` - Get price chart data with trade markers
 
-2. **Login to Heroku:**
-   ```bash
-   heroku login
-   ```
+### Sentiment Endpoints
+- `GET /api/sentiment/<symbol>` - Get sentiment analysis for specific symbol
+- Sentiment data included in `/api/status` response
 
-3. **Create a new Heroku app:**
-   ```bash
-   heroku create your-trading-bot-name
-   ```
+## 🎛️ Configuration
 
-4. **Deploy to Heroku:**
-   ```bash
-   git add .
-   git commit -m "Initial commit"
-   git push heroku main
-   ```
+### Trading Parameters
+- **Initial Balance**: $10,000 (configurable)
+- **Trade Size**: 1-5 shares per trade
+- **Update Frequency**: Every 30 seconds
+- **Sentiment Update**: Every 15 minutes
 
-5. **Open your deployed app:**
-   ```bash
-   heroku open
-   ```
+### Supported Symbols
+- **Tech Stocks**: AAPL, GOOGL, MSFT, TSLA, NVDA, META, AMZN, NFLX
+- **Easy to add**: Modify `SYMBOLS` list in `trading_bot.py`
 
-**Note:** Replace `your-trading-bot-name` with a unique name for your app.
+### Sentiment Sources
+- **Reddit**: r/wallstreetbets posts
+- **News API**: Financial news articles
+- **Social Media**: Simulated sentiment data
+- **Weights**: Configurable source importance
 
-## How to Use
+## 🔧 Customization
 
-### Starting the Bot
-- Click the "Start Bot" button to begin automated trading
-- The bot will automatically buy stocks when prices drop more than 1%
-- It will sell stocks when prices rise more than 1%
+### Adding New Symbols
+```python
+SYMBOLS = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'NVDA', 'META', 'AMZN', 'NFLX', 'YOUR_SYMBOL']
+```
 
-### Manual Trading
-- Select a stock symbol from the dropdown
-- Enter the quantity you want to trade
-- Click "Buy" or "Sell" to execute trades
+### Modifying Trading Strategy
+Edit the `auto_trade()` method in `trading_bot.py` to implement your own strategy.
 
-### Monitoring
-- Watch your account balance and portfolio value in real-time
-- View live stock prices that update every 2 seconds
-- Check the trading history to see all your trades
+### Adjusting Sentiment Weights
+```python
+SENTIMENT_WEIGHTS = {
+    'reddit': 0.4,
+    'news': 0.4,
+    'social': 0.2
+}
+```
 
-## Trading Strategy
+## 📈 Trading Strategy
 
-The bot uses a simple strategy:
-- **Buy Signal**: When a stock price drops more than 1% from the previous price
-- **Sell Signal**: When a stock price rises more than 1% from the previous price
-- **Position Sizing**: Buys up to $1000 worth of stock per trade, sells up to 5 shares
+### Technical Indicators
+- **RSI (Relative Strength Index)**: Oversold/overbought conditions
+- **SMA (Simple Moving Average)**: Trend direction
+- **Volume Analysis**: Market participation
+- **Price Action**: Support/resistance levels
 
-## Technical Details
+### Sentiment Integration
+- **Positive Sentiment**: Increases buy confidence
+- **Negative Sentiment**: Triggers sell signals
+- **Neutral Sentiment**: Relies on technical analysis
+- **Confidence Levels**: 0.6+ for strong signals
 
-- **Backend**: Python Flask server
-- **Frontend**: HTML/CSS/JavaScript with modern design
-- **Port**: 8080 (configurable in the code)
-- **Update Frequency**: Every 2 seconds
-- **Price Simulation**: Random movements between -2% and +2%
+### Risk Management
+- **Position Sizing**: Limited shares per trade
+- **Diversification**: Multiple symbols
+- **Stop Loss**: Automatic loss prevention
+- **Market Hours**: Only trades during market hours
 
-## Files
+## 🛠️ Development
 
-- `trading_bot.py` - Main Flask application
-- `templates/index.html` - Web interface
-- `requirements.txt` - Python dependencies
-- `README.md` - This file
+### Project Structure
+```
+ai-trading-bot/
+├── trading_bot.py          # Main application
+├── templates/
+│   └── index.html         # Web dashboard
+├── requirements.txt       # Python dependencies
+├── README.md             # This file
+├── .gitignore           # Git ignore rules
+├── Procfile             # Heroku deployment
+├── railway.json         # Railway deployment
+└── runtime.txt          # Python version
+```
 
-## Disclaimer
+### Key Components
+- **TradingBot Class**: Core trading logic and portfolio management
+- **Flask App**: Web API and dashboard server
+- **Sentiment Analysis**: Multi-source sentiment processing
+- **Real-time Updates**: Background threading for data updates
 
-This is a **simulation** for educational purposes only. No real money is involved, and the trading strategies are simplified for demonstration. Do not use this for actual trading without significant modifications and proper risk management.
+## 🚀 Deployment
+
+### Local Development
+```bash
+python3 trading_bot.py
+```
+
+### Cloud Deployment
+The project includes configuration for:
+- **Heroku**: Use `Procfile` and `requirements.txt`
+- **Railway**: Use `railway.json` configuration
+- **Other Platforms**: Standard Python web app deployment
+
+## 📝 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## ⚠️ Disclaimer
+
+This trading bot is for educational and demonstration purposes only. Trading involves risk, and past performance does not guarantee future results. Always do your own research and consider consulting with a financial advisor before making investment decisions.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📞 Support
+
+If you have questions or need help:
+1. Check the [Issues](https://github.com/vne1/ai-trading-bot/issues) page
+2. Create a new issue for bugs or feature requests
+3. Review the code comments for implementation details
 
 ---
 
-Enjoy trading! 🎉 
+**Happy Trading! 📈💰** 
