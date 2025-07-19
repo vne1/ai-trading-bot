@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 Trading Bot Dashboard</title>
+    <title>🚀 Real-Time Trading Bot Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -19,7 +20,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -95,7 +96,7 @@
 
         .price-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 15px;
             margin-top: 20px;
         }
@@ -106,6 +107,12 @@
             border-radius: 10px;
             text-align: center;
             border-left: 4px solid #4facfe;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .price-item:hover {
+            transform: translateY(-2px);
         }
 
         .price-item h3 {
@@ -117,6 +124,41 @@
             font-size: 1.5rem;
             font-weight: bold;
             color: #2d3748;
+        }
+
+        .price-change {
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .price-change.positive {
+            color: #38a169;
+        }
+
+        .price-change.negative {
+            color: #e53e3e;
+        }
+
+        .technical-indicators {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 0.8rem;
+        }
+
+        .indicator {
+            background: rgba(255,255,255,0.7);
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .chart-container {
+            height: 400px;
+            margin-top: 20px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 10px;
+            padding: 15px;
         }
 
         .trade-form {
@@ -221,24 +263,34 @@
             100% { opacity: 1; }
         }
 
-        .chart-container {
-            height: 200px;
-            margin-top: 15px;
-            position: relative;
-        }
-
-        .chart {
-            width: 100%;
-            height: 100%;
-            background: rgba(255,255,255,0.9);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
         .loading {
             text-align: center;
             padding: 20px;
             color: #666;
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .chart-controls button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .chart-controls button:hover {
+            background: #5a67d8;
+        }
+
+        .chart-controls button.active {
+            background: #4c51bf;
         }
 
         @media (max-width: 768px) {
@@ -253,14 +305,18 @@
             .header h1 {
                 font-size: 2rem;
             }
+
+            .technical-indicators {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 Trading Bot Dashboard</h1>
-            <p>Real-time trading simulation with automated strategies</p>
+            <h1>🚀 Real-Time Trading Bot Dashboard</h1>
+            <p>Live market data from Yahoo Finance with dynamic visualizations</p>
         </div>
 
         <div class="dashboard">
@@ -289,9 +345,26 @@
         </div>
 
         <div class="card">
-            <h2>📊 Live Prices</h2>
+            <h2>📊 Live Market Prices</h2>
             <div class="price-grid" id="price-grid">
-                <div class="loading">Loading prices...</div>
+                <div class="loading">Loading real-time prices...</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📈 Dynamic Charts</h2>
+            <div class="chart-controls">
+                <button onclick="selectSymbol('AAPL')" class="active">AAPL</button>
+                <button onclick="selectSymbol('GOOGL')">GOOGL</button>
+                <button onclick="selectSymbol('TSLA')">TSLA</button>
+                <button onclick="selectSymbol('MSFT')">MSFT</button>
+                <button onclick="selectSymbol('AMZN')">AMZN</button>
+                <button onclick="selectSymbol('NVDA')">NVDA</button>
+                <button onclick="selectSymbol('META')">META</button>
+                <button onclick="selectSymbol('NFLX')">NFLX</button>
+            </div>
+            <div class="chart-container" id="chart-container">
+                <div class="loading">Select a symbol to view chart</div>
             </div>
         </div>
 
@@ -304,6 +377,9 @@
                     <option value="TSLA">TSLA</option>
                     <option value="MSFT">MSFT</option>
                     <option value="AMZN">AMZN</option>
+                    <option value="NVDA">NVDA</option>
+                    <option value="META">META</option>
+                    <option value="NFLX">NFLX</option>
                 </select>
                 <input type="number" id="quantity-input" placeholder="Quantity" value="1" min="1">
                 <button class="buy-btn" onclick="trade('buy')">Buy</button>
@@ -321,6 +397,8 @@
 
     <script>
         let updateInterval;
+        let currentSymbol = 'AAPL';
+        let chartData = {};
 
         function updateDashboard() {
             fetch('/api/status')
@@ -366,15 +444,34 @@
                         toggleBtn.className = 'toggle-btn';
                     }
                     
-                    // Update prices
+                    // Update prices with real data
                     const priceGrid = document.getElementById('price-grid');
                     priceGrid.innerHTML = '';
                     
-                    for (const [symbol, price] of Object.entries(data.prices)) {
+                    for (const symbol of data.symbols) {
+                        const price = data.prices[symbol];
+                        const history = data.price_history[symbol];
+                        const indicators = data.technical_indicators[symbol];
+                        
+                        let changeClass = '';
+                        let changeText = '';
+                        
+                        if (history && history.length > 1) {
+                            const change = history[history.length - 1].change_pct;
+                            changeClass = change >= 0 ? 'positive' : 'negative';
+                            changeText = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
+                        }
+                        
                         priceGrid.innerHTML += `
-                            <div class="price-item">
+                            <div class="price-item" onclick="selectSymbol('${symbol}')">
                                 <h3>${symbol}</h3>
-                                <div class="price-value">$${price.toFixed(2)}</div>
+                                <div class="price-value">$${price ? price.toFixed(2) : '0.00'}</div>
+                                <div class="price-change ${changeClass}">${changeText}</div>
+                                <div class="technical-indicators">
+                                    <div class="indicator">RSI: ${indicators ? indicators.rsi.toFixed(1) : '0'}</div>
+                                    <div class="indicator">SMA: ${indicators ? indicators.sma_20.toFixed(1) : '0'}</div>
+                                    <div class="indicator">Vol: ${indicators ? (indicators.volume / 1000000).toFixed(1) + 'M' : '0'}</div>
+                                </div>
                             </div>
                         `;
                     }
@@ -389,8 +486,8 @@
                             const tradeClass = trade.action.toLowerCase();
                             historyContainer.innerHTML += `
                                 <div class="history-item ${tradeClass}">
-                                    <strong>${trade.action}</strong> ${trade.quantity} ${trade.symbol} @ $${trade.price} 
-                                    <br><small>${trade.time} - Total: $${trade.total.toFixed(2)}</small>
+                                    <strong>${trade.action}</strong> ${trade.quantity} ${trade.symbol} @ $${trade.price.toFixed(2)} 
+                                    <br><small>${trade.time} - Total: $${trade.total.toFixed(2)} - Balance: $${trade.balance_after.toFixed(2)}</small>
                                 </div>
                             `;
                         });
@@ -398,6 +495,69 @@
                 })
                 .catch(error => {
                     console.error('Error updating dashboard:', error);
+                });
+        }
+
+        function selectSymbol(symbol) {
+            currentSymbol = symbol;
+            
+            // Update active button
+            document.querySelectorAll('.chart-controls button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update chart
+            updateChart(symbol);
+        }
+
+        function updateChart(symbol) {
+            fetch(`/api/chart/${symbol}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('chart-container').innerHTML = '<div class="loading">No chart data available</div>';
+                        return;
+                    }
+                    
+                    const trace1 = {
+                        x: data.times,
+                        y: data.prices,
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        name: 'Price',
+                        line: { color: '#667eea', width: 2 },
+                        marker: { size: 4 }
+                    };
+                    
+                    const layout = {
+                        title: `${symbol} Real-Time Price Chart`,
+                        xaxis: { title: 'Time' },
+                        yaxis: { title: 'Price ($)' },
+                        height: 350,
+                        margin: { l: 50, r: 50, t: 50, b: 50 },
+                        showlegend: false,
+                        plot_bgcolor: 'rgba(255,255,255,0.9)',
+                        paper_bgcolor: 'rgba(255,255,255,0.9)'
+                    };
+                    
+                    Plotly.newPlot('chart-container', [trace1], layout);
+                    
+                    // Add technical indicators info
+                    const infoDiv = document.createElement('div');
+                    infoDiv.style.marginTop = '10px';
+                    infoDiv.style.fontSize = '0.9rem';
+                    infoDiv.innerHTML = `
+                        <strong>Technical Indicators:</strong> 
+                        RSI: ${data.rsi.toFixed(1)} | 
+                        SMA(20): $${data.sma_20.toFixed(2)} | 
+                        Volume: ${(data.volume / 1000000).toFixed(1)}M
+                    `;
+                    document.getElementById('chart-container').appendChild(infoDiv);
+                })
+                .catch(error => {
+                    console.error('Error updating chart:', error);
+                    document.getElementById('chart-container').innerHTML = '<div class="loading">Error loading chart</div>';
                 });
         }
 
@@ -452,7 +612,12 @@
 
         // Initial load and start updates
         updateDashboard();
-        updateInterval = setInterval(updateDashboard, 2000);
+        updateInterval = setInterval(updateDashboard, 30000); // Update every 30 seconds for real data
+
+        // Initial chart
+        setTimeout(() => {
+            selectSymbol('AAPL');
+        }, 1000);
 
         // Cleanup on page unload
         window.addEventListener('beforeunload', () => {
